@@ -83,23 +83,23 @@ const paginatedAndFilteredCourse = async (payload: Record<string, unknown>) => {
   for tags
   **********************/
   let tagName = '';
+  let tagQuery;
   if (payload?.tags) {
     tagName = payload?.tags as string;
+    tagQuery = courseModel.find({ 'tags.name': tagName });
+  } else {
+    tagQuery = courseModel.find();
   }
-  const tagQuery = courseModel.find({ 'tags.name': tagName });
 
   /*****************
   filter
   **********************/
-  // let myQuery: Record<string, unknown> = {};
-  // if (payload.level) {
-  //   myQuery = {};
-  // }
+
   const filterQuery = tagQuery.find(demoQuery);
 
   /*****************
-  min price and max price filtering
-  **********************/
+    min price and max price filtering
+    **********************/
   let mnPrice = 1;
   let mxPrice = 999999999999;
   if (payload?.minPrice) {
@@ -115,12 +115,8 @@ const paginatedAndFilteredCourse = async (payload: Record<string, unknown>) => {
     .populate('categoryId');
 
   /*****************
-  filter
-  **********************/
-
-  /*****************
-  limit
-  **********************/
+    limit
+    **********************/
 
   let page = 1;
   let limit = 10;
@@ -134,14 +130,14 @@ const paginatedAndFilteredCourse = async (payload: Record<string, unknown>) => {
 
   const limitQuery = minMaxQuery.limit(limit);
   /*****************
-  pagination
-  **********************/
+    pagination
+    **********************/
   const skip = (page - 1) * limit;
   const pagination = limitQuery.skip(skip);
 
   /*****************
- sortBy
-  **********************/
+   sortBy
+    **********************/
   let sortBy = 'price';
 
   if (payload?.sortBy === 'startDate' || payload?.sortBy === '-startDate') {
