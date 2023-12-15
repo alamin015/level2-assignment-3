@@ -23,23 +23,7 @@ const getBestCourse = catchAsync(async (req, res) => {
   });
 });
 
-const paginatedAndFilteredCourse = catchAsync(
-  async (req: Request, res: Response) => {
-    const { result, meta } = await courseServices.paginatedAndFilteredCourse(
-      req.query,
-    );
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: 'Courses retrieved successfully',
-      meta,
-      data: result,
-    });
-  },
-);
-
 export const courseControllers = {
   createCourse,
   getBestCourse,
-  paginatedAndFilteredCourse,
 };

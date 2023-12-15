@@ -5,7 +5,6 @@ import { courseControllers } from './course.controller';
 
 const router = Router();
 router.get('/best', courseControllers.getBestCourse);
-router.get('/', courseControllers.paginatedAndFilteredCourse);
 
 router.post(
   '/',

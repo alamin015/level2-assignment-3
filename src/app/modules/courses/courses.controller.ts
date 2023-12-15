@@ -26,7 +26,21 @@ const getSingleCourse = catchAsync(async (req, res) => {
   });
 });
 
+const paginatedAndFilteredCourse = catchAsync(async (req, res) => {
+  const { result, meta } = await coursesServices.paginatedAndFilteredCourse(
+    req.query,
+  );
+  res.status(200).json({
+    success: true,
+    statusCode: 200,
+    message: 'Courses retrieved successfully',
+    meta,
+    data: result,
+  });
+});
+
 export const coursesControllers = {
   updateCourse,
   getSingleCourse,
+  paginatedAndFilteredCourse,
 };

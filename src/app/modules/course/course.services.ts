@@ -25,8 +25,12 @@ const getBestCourse = async () => {
       $limit: 1,
     },
   ]);
-
-  const result = await courseModel.findById(heighest[0]._id);
+  let result;
+  if (heighest.length) {
+    result = await courseModel.findById(heighest[0]._id);
+  } else {
+    throw new Error('There is no Course!! please insert some course');
+  }
 
   if (result) {
     myNewObj = { ...result.toObject() };
@@ -39,111 +43,7 @@ const getBestCourse = async () => {
   return myNewObj;
 };
 
-const paginatedAndFilteredCourse = async (payload: Record<string, unknown>) => {
-  const demoQuery = { ...payload };
-
-  // const skip =
-
-  const excludeFeileds = [
-    'limit',
-    'page',
-    'sortBy',
-    'minPrice',
-    'maxPrice',
-    'tags',
-  ];
-  excludeFeileds.forEach((el) => delete demoQuery[el]);
-
-  /*****************
-  for tags
-  **********************/
-  let tagName = '';
-  if (payload?.tags) {
-    tagName = payload?.tags as string;
-  }
-  const tagQuery = courseModel.find({ 'tags.name': tagName });
-
-  /*****************
-  filter
-  **********************/
-  // let myQuery: Record<string, unknown> = {};
-  // if (payload.level) {
-  //   myQuery = {};
-  // }
-  const filterQuery = tagQuery.find(demoQuery);
-
-  /*****************
-  min price and max price filtering
-  **********************/
-  let mnPrice = 1;
-  let mxPrice = 999999999999;
-  if (payload?.minPrice) {
-    mnPrice = Number(payload.minPrice);
-  }
-  if (payload?.maxPrice) {
-    mxPrice = Number(payload.maxPrice);
-  }
-  const minMaxQuery = filterQuery
-    .find({
-      $and: [{ price: { $gte: mnPrice } }, { price: { $lte: mxPrice } }],
-    })
-    .populate('categoryId');
-
-  /*****************
-  filter
-  **********************/
-
-  /*****************
-  limit
-  **********************/
-
-  let page = 1;
-  let limit = 10;
-  if (payload?.page) {
-    page = Number(payload?.page);
-  }
-
-  if (payload?.limit) {
-    limit = Number(payload?.limit);
-  }
-
-  const limitQuery = minMaxQuery.limit(limit);
-  /*****************
-  pagination
-  **********************/
-  const skip = (page - 1) * limit;
-  const pagination = limitQuery.skip(skip);
-
-  /*****************
- sortBy
-  **********************/
-  let sortBy = 'price';
-
-  if (payload?.sortBy === 'startDate' || payload?.sortBy === '-startDate') {
-    sortBy = payload.sortBy as string;
-  }
-  if (payload?.sortBy === 'title' || payload?.sortBy === '-title') {
-    sortBy = payload.sortBy as string;
-  }
-  if (payload?.sortBy === 'price' || payload?.sortBy === '-price') {
-    sortBy = payload.sortBy as string;
-  }
-  if (payload?.sortBy === 'endDate' || payload?.sortBy === '-endDate') {
-    sortBy = payload.sortBy as string;
-  }
-  if (payload?.sortBy === 'language' || payload?.sortBy === '-language') {
-    sortBy = payload.sortBy as string;
-  }
-
-  const result = await pagination.sort(sortBy);
-
-  const meta: Record<string, unknown> = { page, limit, total: result.length };
-
-  return { result, meta };
-};
-
 export const courseServices = {
   createCourse,
-  paginatedAndFilteredCourse,
   getBestCourse,
 };
