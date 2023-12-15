@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Types } from 'mongoose';
 import { TCourse } from './course.interface';
 import { courseModel } from './course.model';
 import { reviewModel } from '../review/review.model';
@@ -30,11 +27,16 @@ const getBestCourse = async () => {
   ]);
 
   const result = await courseModel.findById(heighest[0]._id);
-  myNewObj = { ...result };
-  myNewObj._doc.averageRating = heighest[0].averageScore;
-  myNewObj._doc.reviewCount = heighest[0].reviewCount;
 
-  return myNewObj._doc;
+  if (result) {
+    myNewObj = { ...result.toObject() };
+    myNewObj.averageRating = heighest[0]?.averageScore;
+    myNewObj.reviewCount = heighest[0]?.reviewCount;
+  } else {
+    throw new Error('something went wrong');
+  }
+
+  return myNewObj;
 };
 
 const paginatedAndFilteredCourse = async (payload: Record<string, unknown>) => {
