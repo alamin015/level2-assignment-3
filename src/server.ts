@@ -6,7 +6,7 @@ import { Server } from 'http';
 let server: Server;
 async function main() {
   try {
-    await mongoose.connect(config.DATABASE_URL_LOCAL as string);
+    await mongoose.connect(config.DATABASE_URL_PROD as string);
     server = app.listen(config.PORT, () => {
       console.log(`Example app listening on port ${config.PORT}`);
     });
